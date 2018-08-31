@@ -14,14 +14,14 @@ class URLparser:
 
     def parse(self, url):
         url = self.removeProt(url);
-        backslash = url.index("/")
-        colon = url.index(":")
-        qmark = url.index("?")
+        backslash = url.find("/")
+        colon = url.find(":")
+        qmark = url.find("?")
 
         bExist, cExist, qExist = self.exist(backslash, colon, qmark)
 
         # Host
-        if cExist:
+        if cExist and not bExist:
             self.host = url[:colon]
         elif bExist:
             self.host = url[:backslash]
@@ -31,22 +31,22 @@ class URLparser:
             return url, self.port, self.path, self.file
 
         # Port
-        if cExist and bExist > 0:
+        if cExist and bExist > 0 and cExist < bExist:
             self.port = url[colon + 1:backslash]
-        elif cExist and qExist > 0:
+        elif cExist and qExist > 0 and cExist < qExist:
             self.port = url[colon + 1:qmark]
-        elif cExist > 0:
-            self.port = url[colon:]
+        elif cExist > 0 and url[colon:] is int:
+            self.port = url[colon:-0]
 
         # Path
         if bExist and qExist:
             self.path = url[backslash:qmark]
         elif bExist:
-            self.path = url[backslash:]
+            self.path = url[backslash:-0]
 
         # File
         if qExist:
-            self.file = url[qmark:]
+            self.file = url[qmark:-0]
 
         return self.host, self.port, self.path, self.file
 
@@ -55,4 +55,4 @@ class URLparser:
 
     def removeProt(self, url):
         x = url.index("//")
-        return url[x + 2:]
+        return url[x + 2:-0]
