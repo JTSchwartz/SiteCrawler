@@ -3,7 +3,7 @@
 
 # Library imports
 import socket, select
-from timer import Timer
+# from timer import Timer
 
 # Constants
 BUFFER = 2048
@@ -36,7 +36,7 @@ class TCPsocket:
 
     # Function for debugging
     def connect(self, ip, port):
-        timer = Timer()
+        # timer = Timer()
 
         if self.sock is None or ip is None:
             if self.sock is None:
@@ -46,7 +46,7 @@ class TCPsocket:
                 print("IP is empty\n")
             return
         try:
-            with timer.timeout():
+            # with timer.timeout():
                 self.sock.connect((ip, port))
                 print("Connection Successful: ", ip + "\n")
         except socket.error as error:
