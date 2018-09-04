@@ -9,11 +9,11 @@ class URLparser:
     def __init__(self):
         self.host = ""
         self.port = 80
-        self.path = ""
+        self.path = "/"
         self.file = ""
 
     def parse(self, url):
-        url = self.removeProt(url);
+        url = self.removeProt(url)
         backslash = url.find("/")
         colon = url.find(":")
         qmark = url.find("?")
@@ -28,7 +28,7 @@ class URLparser:
         elif qExist:
             self.host = url[:qmark]
         else:
-            return url, self.port, self.path, self.file
+            return url.rstrip('\n'), self.port, self.path.rstrip('\n'), self.file.rstrip('\n')
 
         # Port
         if cExist and bExist > 0 and cExist < bExist:
@@ -42,17 +42,17 @@ class URLparser:
         if bExist and qExist:
             self.path = url[backslash:qmark]
         elif bExist:
-            self.path = url[backslash:-0]
+            self.path = url[backslash:]
 
         # File
         if qExist:
-            self.file = url[qmark:-0]
+            self.file = url[qmark:]
 
-        return self.host, self.port, self.path, self.file
+        return self.host.rstrip('\n'), self.port, self.path.rstrip('\n'), self.file.rstrip('\n')
 
     def exist(self, b, c, q):
         return b > 0, c > 0, q > 0
 
     def removeProt(self, url):
         x = url.index("//")
-        return url[x + 2:-0]
+        return url[x + 2:]

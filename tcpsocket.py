@@ -31,9 +31,10 @@ class TCPsocket:
         try:
             return socket.gethostbyname(url)
         except socket.gaierror:
-            print("Failed to gethostbyname")
+            print("Failed to gethostbyname\n")
             return None
 
+    # Function for debugging
     def connect(self, ip, port):
         timer = Timer()
 
@@ -42,13 +43,34 @@ class TCPsocket:
                 print("Sock is empty")
 
             if ip is None:
-                print("IP is empty")
+                print("IP is empty\n")
             return
         try:
             with timer.timeout():
                 self.sock.connect((ip, port))
-                print("Connection Successful: ", ip)
+                print("Connection Successful: ", ip + "\n")
         except socket.error as error:
             print("Connection Failed {}".format(error))
+            self.sock.close()
+            self.sock = None
+
+    def crawl(self, host, port, request):
+
+        ip = self.getIP(host)
+
+        if self.sock is None or ip is None or request is None:
+            print("One of the necessary parameters is missing");
+
+        try:
+            self.sock.connect((ip, port))
+            print("Successfully connected to", host, "(", ip, ") on port", port, "\n\nrecv_string:")
+            self.sock.send(request)
+            response = self.sock.recv(4096)
+            while len(response) > 0:
+                print(response.decode())
+                response = self.sock.recv(4096)
+        except socket.error as error:
+            print("Connection Failed {}".format(error))
+        finally:
             self.sock.close()
             self.sock = None

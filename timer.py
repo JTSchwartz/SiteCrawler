@@ -9,7 +9,7 @@ from contextlib import contextmanager
 class Timer:
 
     def __init__(self):
-        self.sec = 15
+        self.sec = 4
 
     @contextmanager
     def timeout(self):
