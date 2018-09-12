@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Popper.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+    <!-- Schwartz Theme -->
+    <link rel="stylesheet" type="text/css" href="https://jtschwartz.com/css/main.css"/>
+    <link rel="shortcut icon" type="image/png" href="https://jtschwartz.com/img/favico.png"/>
+
+    <!-- Internal JavaScript -->
+    <script src="https://jtschwartz.com/js/terminal.js" type="application/javascript"></script>
+
+    <title>Jacob Schwartz</title>
+</head>
+
+<body style="height: 100vh;">
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="navbar-brand"><strong>Jacob Schwartz</strong></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://jtschwartz.com">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a target="_blank" class="nav-link" href="https://jtschwartz.com/resume/Resume.pdf">Re&sacute;ume</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdownCurrent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Current Projects
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPast">
+                        <a class="dropdown-item active" href="#">Site Crawler</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPast" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Past Projects
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPast">
+                        <a class="dropdown-item" href="../3x3-Puzzle-Solver">3x3 Grid Puzzle Solver</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a target="_blank" class="nav-link" href="mailto:jacob@jtschwartz.com"><i class="fas fa-envelope-square fa-2x"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a target="_blank" class="nav-link" href="https://www.linkedin.com/in/jacob-t-schwartz"><i class="fab fa-linkedin fa-2x"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a target="_blank" class="nav-link" href="https://github.com/JTSchwartz/"><i class="fab fa-github-square fa-2x"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<article>
+    <div class="row no-gutters">
+        <div class="col-12">
+            <div class="container">
+                <br/>
+                <h2>Site Crawler</h2>
+                <p class="lead">
+                    This program is being written for CPS 470 Computer Networks. At this time the program only uses a single thread to "crawl" 100 urls from a text file. Crawling in this case consists of connecting the the hosts, sending a HEAD request, and checking the response for presence of a robots.txt file. If one is not present the program will move forward with sending a GET request. Responses are printed to the console from all requests sent. By the completion of the project, the program will "crawl" one millions URLs, using multithreading to greatly speed up the process.
+                </p>
+                <p>
+                    Language: Python
+                </p>
+            </div>
+        </div>
+    </div>
+</article>
+
+<footer>
+    <div class="container-fluid bg-primary text-secondary text-right" style="padding: .3rem .5rem .05rem 0">
+        <h6 style="padding-bottom: 0">&reg; Jacob Schwartz</h6>
+    </div>
+</footer>
+</body>
+</html>

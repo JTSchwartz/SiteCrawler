@@ -342,3 +342,4 @@ venv/Scripts/pyexpat.pyd
 venv/Scripts/select.pyd
 venv/Scripts/unicodedata.pyd
 venv/Scripts/winsound.pyd
+*.pyc
