@@ -11,19 +11,17 @@ from urlparser import URLparser
 # Main function
 def main():
     q = Queue()
-    q.put("https://www.jtschwartz.com")
-
     connection = TCPsocket()
 
-    # try:
-    #     with open("URL-input-100.txt") as file:
-    #         for line in file:
-    #             q.put(line)
-    # except IOError:
-    #     print("File does not exist")
-    #     exit(1)
+    try:
+        with open("URL-input-100.txt") as file:
+            for line in file:
+                q.put(line)
+    except IOError:
+        print("File does not exist")
+        exit(1)
 
-    # print("# of URLs: ", q.qsize(), "\n")
+    print("# of URLs: ", q.qsize(), "\n")
     count = 0
 
     while not q.empty():
@@ -31,12 +29,15 @@ def main():
         r = Request()
         url = q.get()
         count += 1
-        print("URL#: ", count, "\n")
+        print("\n-----------\nURL#:", count, "(", url.rstrip("\n"), ")\n")
         connection.createSocket()
         host, port, path, file = urlParse.parse(url)
-        request = r.createGETReq(host, path, file)
-        # connection.connect(connection.getIP(host), port)
-        connection.crawl(host, port, str.encode(request))
+        hReq = r.createHEADReq(host)
+
+        if not connection.robots(host, port, str.encode(hReq)):
+            connection.createSocket()
+            gReq = r.createGETReq(host, path, file)
+            connection.crawl(host, port, str.encode(gReq))
 
 
 if __name__ == "__main__":
