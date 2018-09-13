@@ -60,17 +60,53 @@ class TCPsocket:
 
         if self.sock is None or ip is None or request is None:
             print("One of the necessary parameters is missing");
+            self.closeSocket()
+            return
 
         try:
             self.sock.connect((ip, port))
-            print("Successfully connected to", host, "(", ip, ") on port", port, "\n\nrecv_string:")
+            print("GET request response:")
             self.sock.send(request)
             response = self.sock.recv(4096)
             while len(response) > 0:
-                print(response.decode())
+                print(response.decode("utf-8", "ignore"))
                 response = self.sock.recv(4096)
         except socket.error as error:
             print("Connection Failed {}".format(error))
         finally:
-            self.sock.close()
-            self.sock = None
+            self.closeSocket()
+
+    def robots(self, host, port, request):
+
+        ip = self.getIP(host)
+
+        if self.sock is None or ip is None or request is None:
+            print("One of the necessary parameters is missing");
+            self.closeSocket()
+            return
+
+        try:
+            self.sock.connect((ip, port))
+            print("Successfully connected to", host, "(", ip, ") on port", port, "\n\nHEAD request response:")
+            self.sock.send(request)
+            response = self.sock.recv(4096)
+            headList = []
+            while len(response) > 0:
+                headList.append(response.decode("utf-8", "ignore"))
+                response = self.sock.recv(4096)
+            headResponse = "".join(headList)
+
+            print(headResponse)
+
+            if "200 OK" in headResponse:
+                return True
+        except socket.error as error:
+            print("Connection Failed {}".format(error))
+        finally:
+            self.closeSocket()
+
+        return False
+
+    def closeSocket(self):
+        self.sock.close()
+        self.sock = None
