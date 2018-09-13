@@ -15,13 +15,6 @@ class Threader(threading.Thread):
     totalCount = [1]
     threadLock = threading.Lock()
 
-    # @classmethod
-    # def define(cls, q, total):
-    #     cls.urls = q
-    #     cls.totalCount[0] = total
-    #     cls.urlID[0] = total
-    #     print("Hit")
-
     def __init__(self, threadID, q):
         threading.Thread.__init__(self)
         self.id = threadID
