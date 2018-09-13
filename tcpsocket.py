@@ -64,6 +64,7 @@ class TCPsocket:
             return
 
         try:
+            self.sock.settimeout(5.0)
             self.sock.connect((ip, port))
             print("GET request response:")
             self.sock.send(request)
@@ -86,6 +87,7 @@ class TCPsocket:
             return
 
         try:
+            self.sock.settimeout(5.0)
             self.sock.connect((ip, port))
             print("Successfully connected to", host, "(", ip, ") on port", port, "\n\nHEAD request response:")
             self.sock.send(request)
