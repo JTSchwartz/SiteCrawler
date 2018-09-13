@@ -1,6 +1,6 @@
 # threader.py
 # author: Jacob Schwartz (schwartzj1)
-
+from collections import Set
 from queue import Queue
 import threading
 from request import Request
@@ -14,6 +14,7 @@ class Threader(threading.Thread):
     urlID = [1]
     totalCount = [1]
     threadLock = threading.Lock()
+    uniqueHosts = set()
 
     def __init__(self, threadID, q):
         threading.Thread.__init__(self)
@@ -22,7 +23,7 @@ class Threader(threading.Thread):
         self.totalCount[0] = q.qsize()
 
     def run(self):
-        print("URLS from Thread: ", self.urls.qsize)
+        print("URL from Thread: ", self.urls.qsize())
         url = [""]
         connection = TCPsocket()
 
@@ -35,18 +36,25 @@ class Threader(threading.Thread):
 
             url[0] = self.urls.get()
             self.urlID[0] += 1
-            print("Thread: %d | URL %d: %s" % (self.id, (self.totalCount[0] - self.urlID[0]), url[0]))
+            print("Thread: %d | URL %d: %s" % (self.id, self.urlID[0], url[0]))
             self.threadLock.release()
 
             urlParse = URLparser()
             r = Request()
-            connection.createSocket()
             host, port, path, file = urlParse.parse(url[0])
-            hReq = r.createHEADReq(host)
+            connection.createSocket()
+            ip = connection.getIP(host)
 
-            if not connection.robots(host, port, str.encode(hReq)):
-                connection.createSocket()
-                gReq = r.createGETReq(host, path, file)
-                connection.crawl(host, port, str.encode(gReq))
+            if ip not in self.uniqueHosts:
+                self.uniqueHosts.add(ip)
+
+                hReq = r.createHEADReq(host)
+
+                if not connection.robots(host, port, str.encode(hReq)):
+                    connection.createSocket()
+                    gReq = r.createGETReq(host, path, file)
+                    connection.crawl(host, port, str.encode(gReq))
+            else:
+                connection.closeSocket()
 
         print("Thread Exiting:", self.id)

@@ -54,5 +54,9 @@ class URLparser:
         return b > 0, c > 0, q > 0
 
     def removeProt(self, url):
-        x = url.index("//")
+        x = url.find("//")
+
+        if x < 0:
+            return url
+
         return url[x + 2:]

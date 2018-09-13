@@ -77,6 +77,7 @@ class TCPsocket:
     def robots(self, host, port, request):
 
         ip = self.getIP(host)
+        found = False
 
         if self.sock is None or ip is None or request is None:
             print("One of the necessary parameters is missing");
@@ -98,13 +99,13 @@ class TCPsocket:
             print(headResponse)
 
             if "200 OK" in headResponse:
-                return True
+                found = True
         except socket.error as error:
             print("Connection Failed {}".format(error))
         finally:
             self.closeSocket()
 
-        return False
+        return found
 
     def closeSocket(self):
         self.sock.close()

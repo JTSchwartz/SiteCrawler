@@ -14,7 +14,7 @@ def main():
     q = Queue()
 
     try:
-        with open("URL-input-100.txt") as file:
+        with open("URL-input-million.txt") as file:
             for line in file:
                 q.put(line)
     except IOError:
@@ -24,7 +24,7 @@ def main():
     print("# of URLs: ", q.qsize(), "\n")
 
     threadList = []
-    threadCount = 100
+    threadCount = 5000
 
     for x in range(0, threadCount, 1):
         t = Threader(x, q)
