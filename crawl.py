@@ -14,7 +14,7 @@ def main():
     q = Queue()
 
     try:
-        with open("URL-input-million.txt") as file:
+        with open("URL-input-1M.txt") as file:
             for line in file:
                 q.put(line)
     except IOError:
