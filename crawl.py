@@ -2,19 +2,20 @@
 # author: Jacob Schwartz (schwartzj1)
 
 # Import classes
+import sys
 import time
 from queue import Queue
 from threader import Threader
 
 
 # Main function
-def main():
+def main(argv):
     start = time.time()
 
     q = Queue()
 
     try:
-        with open("URL-input-1M.txt") as file:
+        with open(argv[1]) as file:
             for line in file:
                 q.put(line)
     except IOError:
@@ -24,7 +25,7 @@ def main():
     print("# of URLs: ", q.qsize(), "\n")
 
     threadList = []
-    threadCount = 5000
+    threadCount = int(argv[0])
 
     for x in range(0, threadCount, 1):
         t = Threader(x, q)
@@ -38,4 +39,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

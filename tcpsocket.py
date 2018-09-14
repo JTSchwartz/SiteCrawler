@@ -21,7 +21,7 @@ class TCPsocket:
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as error:
-            print("Failed to create a TCP socket {}".format(error))
+            # print("Failed to create a TCP socket {}".format(error))
             self.sock = None
 
     # Get IP from Hostname
@@ -30,7 +30,7 @@ class TCPsocket:
         try:
             return socket.gethostbyname(url)
         except socket.gaierror:
-            print("Failed to gethostbyname\n")
+            # print("Failed to gethostbyname\n")
             return None
 
     # Function for debugging
@@ -54,40 +54,50 @@ class TCPsocket:
     def crawl(self, host, port, request):
 
         ip = self.getIP(host)
+        found = False
 
         if self.sock is None or ip is None or request is None:
-            print("One of the necessary parameters is missing");
             self.closeSocket()
-            return
+            return found
 
         try:
             self.sock.settimeout(5.0)
             self.sock.connect((ip, port))
-            print("GET request response:")
+            # print("GET request response:")
             self.sock.send(request)
             response = self.sock.recv(4096)
+            getList = []
             while len(response) > 0:
-                print(response.decode("utf-8", "ignore"))
+                getList.append(response.decode("utf-8", "ignore"))
                 response = self.sock.recv(4096)
+
+            getResponse = "".join(getList)
+            # print(getResponse)
+
+            if "200 OK" in getResponse:
+                found = True
         except socket.error as error:
-            print("Connection Failed {}".format(error))
+            found = False
         finally:
             self.closeSocket()
+
+        return found
 
     def robots(self, host, port, request):
 
         ip = self.getIP(host)
         found = False
+        info = "\tLoading... failed\n"
 
         if self.sock is None or ip is None or request is None:
-            print("One of the necessary parameters is missing");
             self.closeSocket()
-            return
+            return found, info
+
+        info = "\tLoading... done\n"
 
         try:
             self.sock.settimeout(5.0)
             self.sock.connect((ip, port))
-            print("Successfully connected to", host, "(", ip, ") on port", port, "\n\nHEAD request response:")
             self.sock.send(request)
             response = self.sock.recv(4096)
             headList = []
@@ -96,16 +106,16 @@ class TCPsocket:
                 response = self.sock.recv(4096)
             headResponse = "".join(headList)
 
-            print(headResponse)
+            # print(headResponse)
 
             if "200 OK" in headResponse:
                 found = True
         except socket.error as error:
-            print("Connection Failed {}".format(error))
+            info = "\tLoading... failed\n"
         finally:
             self.closeSocket()
 
-        return found
+        return found, info
 
     def closeSocket(self):
         self.sock.close()
