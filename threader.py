@@ -33,7 +33,7 @@ class Threader(threading.Thread):
 
             if self.urlID[0] > self.totalCount[0]:
                 self.threadLock.release()
-                break
+                return
 
             url[0] = self.urls.get()
             self.urlID[0] += 1
@@ -53,8 +53,8 @@ class Threader(threading.Thread):
             else:
                 info.append("\tChecking host uniqueness... failed\n")  # INFO ADD: Unique Host Failed
                 connection.closeSocket()
-                self.printInfo(info)
-                return
+                # self.printInfo(info)
+                continue
 
             ip = connection.getIP(host)
             info.append("\tDoing DNS... " + (("done, found on: " + ip) if ip is not None else "failed") + "\n")
@@ -66,8 +66,8 @@ class Threader(threading.Thread):
             else:
                 info.append("\tChecking ip uniqueness... failed\n")  # INFO ADD: Unique Host Failed
                 connection.closeSocket()
-                self.printInfo(info)
-                return
+                # self.printInfo(info)
+                continue
 
             hReq = r.createHEADReq(host)
 
@@ -85,6 +85,7 @@ class Threader(threading.Thread):
                 info.append("\tLoading... " + ("success" if connection.crawl(host, port, str.encode(gReq)) else "failed") + "\n")
 
             self.printInfo(info)
+            # print(self.urlID[0], "\n")
 
     def printInfo(self, infoString):
         print("".join(infoString))
