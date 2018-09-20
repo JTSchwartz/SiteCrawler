@@ -12,6 +12,12 @@ TIMEOUT = 25
 # Class definition
 class TCPsocket:
 
+    status2xx = 0
+    status3xx = 0
+    status4xx = 0
+    status5xx = 0
+    statusOther = 0
+
     def __init__(self):
         self.sock = None
         self.host = ""
@@ -55,6 +61,8 @@ class TCPsocket:
 
         ip = self.getIP(host)
         found = False
+        status = 0
+        href_src = 0
 
         if self.sock is None or ip is None or request is None:
             self.closeSocket()
@@ -74,14 +82,23 @@ class TCPsocket:
             getResponse = "".join(getList)
             # print(getResponse)
 
-            if "200 OK" in getResponse:
+            href_src += getResponse.count("href=") + getResponse.count("src=")
+
+            if "HTTP/1.0 2" in getResponse or "HTTP/1.1 2" in getResponse:
                 found = True
+                status = 2
+            elif "HTTP/1.0 3" in getResponse or "HTTP/1.1 3" in getResponse:
+                status = 3
+            elif "HTTP/1.0 4" in getResponse or "HTTP/1.1 4" in getResponse:
+                status = 4
+            elif "HTTP/1.0 5" in getResponse or "HTTP/1.1 5" in getResponse:
+                status = 5
         except socket.error as error:
             found = False
         finally:
             self.closeSocket()
 
-        return found
+        return found, status, href_src
 
     def robots(self, host, port, request):
 

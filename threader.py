@@ -11,11 +11,21 @@ from urlparser import URLparser
 class Threader(threading.Thread):
 
     urls = Queue()
-    urlID = [1]
-    totalCount = [1]
+    urlID = [0]
+    totalCount = [0]
     threadLock = threading.Lock()
     uniqueIPs = set()
     uniqueHosts = set()
+
+    # Statistics
+    dnslookups = [0]
+    robots = [0]
+    links = [0]
+    status2xx = [0]
+    status3xx = [0]
+    status4xx = [0]
+    status5xx = [0]
+    status_o = [0]
 
     def __init__(self, threadID, q):
         threading.Thread.__init__(self)
@@ -59,6 +69,12 @@ class Threader(threading.Thread):
             ip = connection.getIP(host)
             info.append("\tDoing DNS... " + (("done, found on: " + ip) if ip is not None else "failed") + "\n")
 
+
+            if ip is not None:
+                self.threadLock.acquire()
+                self.dnslookups[0] += 1
+                self.threadLock.release()
+
             if ip not in self.uniqueIPs:
                 self.uniqueIPs.add(host)
 
@@ -73,17 +89,37 @@ class Threader(threading.Thread):
 
             info.append("\tConnecting on robots... done\n")  # INFO ADD: Robots
 
-            robots, hInfo = connection.robots(host, port, str.encode(hReq))
+            robot, hInfo = connection.robots(host, port, str.encode(hReq))
 
             info.append(hInfo)
-            info.append("\tVerifying header... " + ("found" if robots else "failed") + "\n")
+            info.append("\tVerifying header... " + ("found" if robot else "failed") + "\n")
 
-            if not robots:
+            if robot:
+                self.threadLock.acquire()
+                self.robots[0] += 1
+                self.threadLock.release()
+
+            if not robot:
                 info.append("\tConnecting on page... done" + "\n")
                 connection.createSocket()
                 gReq = r.createGETReq(host, path, file)
-                info.append("\tLoading... " + ("success" if connection.crawl(host, port, str.encode(gReq)) else "failed") + "\n")
+                connected, status, count = connection.crawl(host, port, str.encode(gReq))
+                info.append("\tLoading... " + ("success" if connected else "failed") + "\n")
 
+                self.threadLock.acquire()
+                if status == 2:
+                    self.status2xx[0] += 1
+                elif status == 3:
+                    self.status3xx[0] += 1
+                elif status == 4:
+                    self.status4xx[0] += 1
+                elif status == 5:
+                    self.status5xx[0] += 1
+                else:
+                    self.status_o[0] += 1
+
+                self.links[0] += count
+                self.threadLock.release()
             self.printInfo(info)
             # print(self.urlID[0], "\n")
 
