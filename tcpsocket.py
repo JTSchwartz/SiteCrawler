@@ -63,6 +63,7 @@ class TCPsocket:
         found = False
         status = 0
         href_src = 0
+        size = 0
 
         if self.sock is None or ip is None or request is None:
             self.closeSocket()
@@ -83,6 +84,7 @@ class TCPsocket:
             # print(getResponse)
 
             href_src += getResponse.count("href=") + getResponse.count("src=")
+            size = len(getResponse.encode('utf-8'))
 
             if "HTTP/1.0 2" in getResponse or "HTTP/1.1 2" in getResponse:
                 found = True
@@ -98,7 +100,7 @@ class TCPsocket:
         finally:
             self.closeSocket()
 
-        return found, status, href_src
+        return found, status, href_src, size
 
     def robots(self, host, port, request):
 

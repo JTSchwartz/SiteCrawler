@@ -21,6 +21,7 @@ class Threader(threading.Thread):
     dnslookups = [0]
     robots = [0]
     links = [0]
+    bytes = [0]
     status2xx = [0]
     status3xx = [0]
     status4xx = [0]
@@ -98,12 +99,11 @@ class Threader(threading.Thread):
                 self.threadLock.acquire()
                 self.robots[0] += 1
                 self.threadLock.release()
-
-            if not robot:
+            else:
                 info.append("\tConnecting on page... done" + "\n")
                 connection.createSocket()
                 gReq = r.createGETReq(host, path, file)
-                connected, status, count = connection.crawl(host, port, str.encode(gReq))
+                connected, status, count, size = connection.crawl(host, port, str.encode(gReq))
                 info.append("\tLoading... " + ("success" if connected else "failed") + "\n")
 
                 self.threadLock.acquire()
@@ -118,6 +118,7 @@ class Threader(threading.Thread):
                 else:
                     self.status_o[0] += 1
 
+                self.bytes[0] += size
                 self.links[0] += count
                 self.threadLock.release()
             self.printInfo(info)
