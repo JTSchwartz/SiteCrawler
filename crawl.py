@@ -43,7 +43,7 @@ def main(argv):
           "Looked up", Threader.dnslookups[0], "DNS names\n"
           "Downloaded", Threader.robots[0], "robots\n"
           "Crawled", pagecount, "pages (", size, "MB)\n"
-          "Parsed", Threader.links[0], "Links\n"
+          "Parsed", Threader.links[0], "Links (", Threader.link2xx[0], " with 200 Status)\n"
           "HTTP Codes: 2xx:", Threader.status2xx[0],
           "3xx:", Threader.status3xx[0],
           "4xx:", Threader.status4xx[0],

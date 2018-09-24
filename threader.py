@@ -27,6 +27,7 @@ class Threader(threading.Thread):
     status4xx = [0]
     status5xx = [0]
     status_o = [0]
+    link2xx = [0]
 
     def __init__(self, threadID, q):
         threading.Thread.__init__(self)
@@ -103,7 +104,7 @@ class Threader(threading.Thread):
                 info.append("\tConnecting on page... done" + "\n")
                 connection.createSocket()
                 gReq = r.createGETReq(host, path, file)
-                connected, status, count, size = connection.crawl(host, port, str.encode(gReq))
+                connected, status, count, size, pagelinks = connection.crawl(host, port, str.encode(gReq))
                 info.append("\tLoading... " + ("success" if connected else "failed") + "\n")
 
                 self.threadLock.acquire()
@@ -121,6 +122,11 @@ class Threader(threading.Thread):
                 self.bytes[0] += size
                 self.links[0] += count
                 self.threadLock.release()
+
+                for link in pagelinks:
+                    connection.createSocket()
+                    if connection.linkStatus(link):
+                        self.link2xx[0] += 1
             self.printInfo(info)
             # print(self.urlID[0], "\n")
 

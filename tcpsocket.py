@@ -2,7 +2,10 @@
 # author: Jacob Schwartz (schwartzj1)
 
 # Library imports
+import re
 import socket
+from request import Request
+from urlparser import URLparser
 
 # Constants
 BUFFER = 2048
@@ -62,8 +65,9 @@ class TCPsocket:
         ip = self.getIP(host)
         found = False
         status = 0
-        href_src = 0
+        href = 0
         size = 0
+        pagelinks = list()
 
         if self.sock is None or ip is None or request is None:
             self.closeSocket()
@@ -83,11 +87,13 @@ class TCPsocket:
             getResponse = "".join(getList)
             # print(getResponse)
 
-            href_src += getResponse.count("href=") + getResponse.count("src=")
             size = len(getResponse.encode('utf-8'))
 
             if "HTTP/1.0 2" in getResponse or "HTTP/1.1 2" in getResponse:
+                regex = re.compile('(?<=href=").*?(?=")')
                 found = True
+                pagelinks = regex.findall(getResponse)
+                href += len(pagelinks)
                 status = 2
             elif "HTTP/1.0 3" in getResponse or "HTTP/1.1 3" in getResponse:
                 status = 3
@@ -100,7 +106,7 @@ class TCPsocket:
         finally:
             self.closeSocket()
 
-        return found, status, href_src, size
+        return found, status, href, size, pagelinks
 
     def robots(self, host, port, request):
 
@@ -135,6 +141,47 @@ class TCPsocket:
             self.closeSocket()
 
         return found, info
+
+    def linkStatus(self, url):
+
+        urlParse = URLparser()
+        r = Request()
+
+        host, port, path, file = urlParse.parse(url)
+
+        request = r.createGETReq(host, path, file)
+        ip = self.getIP(host)
+        found = False
+
+        self.createSocket()
+
+        if self.sock is None or ip is None or request is None:
+            self.closeSocket()
+            return found
+
+        gReq = str.encode(request)
+
+        try:
+            self.sock.settimeout(5.0)
+            self.sock.connect((ip, port))
+            self.sock.send(gReq)
+            response = self.sock.recv(4096)
+            getList = []
+            while len(response) > 0:
+                getList.append(response.decode("utf-8", "ignore"))
+                response = self.sock.recv(4096)
+
+            getResponse = "".join(getList)
+            # print(getResponse)
+
+            if "HTTP/1.0 2" in getResponse or "HTTP/1.1 2" in getResponse:
+                found = True
+        except socket.error as error:
+            found = False
+        finally:
+            self.closeSocket()
+
+        return found
 
     def closeSocket(self):
         self.sock.close()
