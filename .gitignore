@@ -343,3 +343,5 @@ venv/Scripts/select.pyd
 venv/Scripts/unicodedata.pyd
 venv/Scripts/winsound.pyd
 *.pyc
+~$report.docx
+report.docx
