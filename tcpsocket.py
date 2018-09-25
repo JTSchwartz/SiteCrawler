@@ -41,6 +41,8 @@ class TCPsocket:
         except socket.gaierror:
             # print("Failed to gethostbyname\n")
             return None
+        except UnicodeError:
+            return None
 
     # Function for debugging
     def connect(self, ip, port):
@@ -67,11 +69,11 @@ class TCPsocket:
         status = 0
         href = 0
         size = 0
-        pagelinks = list()
+        # pagelinks = list()
 
         if self.sock is None or ip is None or request is None:
             self.closeSocket()
-            return found
+            return found, status, href, size
 
         try:
             self.sock.settimeout(5.0)
@@ -90,10 +92,11 @@ class TCPsocket:
             size = len(getResponse.encode('utf-8'))
 
             if "HTTP/1.0 2" in getResponse or "HTTP/1.1 2" in getResponse:
-                regex = re.compile('(?<=href=").*?(?=")')
+                # regex = re.compile('(?<=href=").*?(?=")')
                 found = True
-                pagelinks = regex.findall(getResponse)
-                href += len(pagelinks)
+                # pagelinks = regex.findall(getResponse)
+                # href += len(pagelinks)
+                href += getResponse.count("href=")
                 status = 2
             elif "HTTP/1.0 3" in getResponse or "HTTP/1.1 3" in getResponse:
                 status = 3
@@ -106,7 +109,7 @@ class TCPsocket:
         finally:
             self.closeSocket()
 
-        return found, status, href, size, pagelinks
+        return found, status, href, size
 
     def robots(self, host, port, request):
 
@@ -142,6 +145,7 @@ class TCPsocket:
 
         return found, info
 
+    # Used for testing how many extracted links return with status 200 OK. Not used in final project
     def linkStatus(self, url):
 
         urlParse = URLparser()
